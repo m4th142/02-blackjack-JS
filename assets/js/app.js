@@ -1,12 +1,11 @@
-let deck = [];
-let kinds = ['C','D', 'S', 'H'];
-let specials = ['A', 'J', 'K', 'Q'];
+let deck = [],
+    kinds = ['C','D', 'S', 'H'],
+    specials = ['A', 'J', 'K', 'Q'];
 
-let puntosJugador = 0
-    puntosComputadora = 0
+let puntosJugador = 0,
+    puntosComputadora = 0;
 
 const crearDeck = () => {
-
     for( let i = 2; i <= 10; i++ ){
         for( kind of kinds ){
             deck.push( i + kind );
@@ -18,9 +17,7 @@ const crearDeck = () => {
             deck.push( special + kind );
         }
     }
-
     return deck = _.shuffle( deck );
-
 }
 
 crearDeck(); 
@@ -32,14 +29,13 @@ const tomarCarta = () => {
     return deck.shift()
 }
 
-const valorCarta = ( valorCarta ) =>{ 
-    valorCarta = valorCarta.substring( 0, valorCarta.length-1 );
-    return (!isNaN(valorCarta)) ? Number(valorCarta) :
-            (valorCarta === 'A') ? 11 : 10;
+const valorCarta = ( carta ) =>{ 
+    carta = carta.substring( 0, carta.length-1 );
+    return (!isNaN(carta)) ? Number(carta) :
+            (carta === 'A') ? 11 : 10;
 }
 
 const renderizarCarta = ( carta ) => {
-
     let cartaPNG = document.createElement('img');
     cartaPNG.src = `assets//cartas/${carta}.png`;
     cartaPNG.className = "carta"
@@ -48,13 +44,13 @@ const renderizarCarta = ( carta ) => {
 }
 
 const renderizarPuntos = ( carta ) => {
-
     puntosJugador += valorCarta(carta);
     puntos[0].innerText = puntosJugador;
-
 }
 
 const turnoComputadora = () => {
+        btnPedir.disabled = true
+        btnDetener.disabled = true
 
     do {
         
@@ -68,22 +64,30 @@ const turnoComputadora = () => {
         cartaPNG.className = "carta"
         divComputadora.appendChild(cartaPNG)
 
-    } while ( puntosComputadora < puntosJugador || puntosComputadora < 21 );
-    // puntosComputadora > puntosJugador || puntosComputadora > 21
+        if ( puntosJugador > 21 ) {
+            break;
+        }
 
+    } while ( puntosJugador <= 21 && puntosComputadora <= puntosJugador && puntosComputadora < 21 );
+    alertGanador();
 }
 
-const evaluar = ( puntos ) => {
+const alertGanador = () => {
+    setTimeout(() => {
+        const mensaje =
+        ( (puntosJugador === puntosComputadora) ? 'Nadie gana' :
+          (puntosJugador <= 21 && puntosComputadora > 21) ? 'Jugador gana' :
+          'Computadora gana')
 
-    if ( puntos <= 21 ) {
-        return;
+        alert(mensaje);
+    }, 500);
+};
+
+const evaluar = () => {
+    if ( puntosJugador >= 21 ) {
+        return turnoComputadora();
     }
-
-    btnPedir.disabled = true
-    turnoComputadora();
-
 }
-
 
 // Eventos
 const btnPedir = document.getElementById('btnPedir');
@@ -101,27 +105,28 @@ btnPedir.addEventListener( 'click', () => {
     renderizarCarta(carta);
     renderizarPuntos(carta);
 
-
-    evaluar(puntosJugador);
-})
-
-btnNuevo.addEventListener( 'click', () => {
-
-    deck = [];
-    crearDeck();
-    
-
-
+    evaluar();
 })
 
 btnDetener.addEventListener( 'click', () => {
-
-    btnPedir.disabled = true
     turnoComputadora();
-    
-
-
 })
 
+btnNuevo.addEventListener( 'click', () => {
+    puntosJugador = 0;
+    puntosComputadora =0;
+
+    deck = [];
+    crearDeck();
+
+    divJugador.innerText = '';
+    divComputadora.innerText = '';
+
+    puntos[0].innerText = 0;
+    puntos[1].innerText = 0;
+
+    btnPedir.disabled = false;
+    btnDetener.disabled = false;
+})
 
 
