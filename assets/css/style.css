@@ -29,6 +29,6 @@ html, body {
     margin-left: -75px;
 }
 
-#jugador-carta, #computadora-carta {
+.divCartas {
     height: 235px;
 }
